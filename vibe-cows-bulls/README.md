@@ -1,27 +1,94 @@
-# VibeCowsBulls
+# Vibe Cows & Bulls
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.11.
+A multiplayer implementation of the classic Cows and Bulls number guessing game built with Angular and Node.js.
 
-## Development server
+## Game Modes
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+### 1. Competitive Mode (Default)
+- Both players try to guess the same randomly generated secret number
+- First player to guess correctly wins
+- Players take turns making guesses
+- Each guess gets graded with cows (correct digit, wrong position) and bulls (correct digit, correct position)
 
-## Code scaffolding
+### 2. Host Mode (New!)
+- One player acts as the "Host" who picks the secret number
+- The other player acts as the "Guesser" who tries to figure out the number
+- Host grades each guess manually (assigns cows and bulls)
+- Game continues until the guesser finds the correct number
+- Perfect for playing with friends where you want full control over the game
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## How to Play
 
-## Build
+### Competitive Mode
+1. Choose "Competitive" mode when creating a room
+2. Both players join the room and ready up
+3. Game starts automatically with a random secret number
+4. Players take turns guessing 4-digit numbers
+5. Each guess receives feedback in the form of cows and bulls
+6. First player to guess correctly wins!
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Host Mode
+1. Choose "Host" mode when creating a room
+2. Host player joins and sets a secret 4-digit number
+3. Guesser player joins the room
+4. Host marks themselves as ready
+5. Guesser makes guesses
+6. Host manually grades each guess with cows and bulls
+7. Game continues until the guesser finds the correct number
 
-## Running unit tests
+## Rules
+- Secret numbers must be 4 digits (0-9) with unique digits
+- Cows: Correct digit in wrong position
+- Bulls: Correct digit in correct position
+- Maximum attempts: 10 (configurable)
+- Players must be ready before the game can start
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Features
+- Real-time multiplayer gameplay
+- Beautiful, responsive UI with Tailwind CSS
+- Socket.io for real-time communication
+- Game state management
+- Player roles and permissions
+- Guess history tracking
+- Error handling and validation
 
-## Running end-to-end tests
+## Getting Started
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
 
-## Further help
+### Installation
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   cd vibe-cows-bulls
+   npm install
+   ```
+3. Start the server:
+   ```bash
+   npm start
+   ```
+4. Start the Angular app:
+   ```bash
+   cd vibe-cows-bulls
+   npm start
+   ```
+5. Open your browser to `http://localhost:4200`
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Technology Stack
+- **Frontend**: Angular 17, Tailwind CSS
+- **Backend**: Node.js, Express, Socket.io
+- **Real-time Communication**: WebSockets via Socket.io
+- **Styling**: Tailwind CSS for responsive design
+
+## Game Flow
+1. Player creates or joins a room
+2. Players ready up
+3. Game starts (either automatically or after host sets number)
+4. Players take turns making guesses
+5. Game continues until someone wins or max attempts reached
+6. Option to start a new game
+
+Enjoy playing Cows and Bulls with friends!

@@ -1,0 +1,212 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 p-8">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-4xl font-bold text-white text-center mb-8">Multiplayer Cows & Bulls</h1>
+
+    <!-- Connection Status -->
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg" [class]="connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+        <div class="w-2 h-2 rounded-full" [class]="connected ? 'bg-green-500' : 'bg-red-500'"></div>
+        {{ connected ? 'Connected' : 'Disconnected' }}
+      </div>
+    </div>
+
+    <!-- Error Display -->
+    <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+      <div class="flex justify-between items-center">
+        <span>{{ error }}</span>
+        <button (click)="clearError()" class="text-red-500 hover:text-red-700">×</button>
+      </div>
+    </div>
+
+    <!-- Room Creation/Joining -->
+    <div *ngIf="!currentRoom" class="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <h2 class="text-2xl font-bold mb-4 text-center">Join or Create a Room</h2>
+
+      <div class="mb-4">
+        <input [(ngModel)]="playerName" placeholder="Enter your name" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <!-- Game Mode Selection -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Game Mode:</label>
+        <div class="grid grid-cols-2 gap-4">
+          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+            <input type="radio" [(ngModel)]="selectedGameMode" name="gameMode" value="competitive" class="mr-2">
+            <div>
+              <div class="font-medium">Competitive</div>
+              <div class="text-sm text-gray-500">Both players guess the same number</div>
+            </div>
+          </label>
+          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+            <input type="radio" [(ngModel)]="selectedGameMode" name="gameMode" value="host" class="mr-2">
+            <div>
+              <div class="font-medium">Host Mode</div>
+              <div class="text-sm text-gray-500">One player picks, other guesses</div>
+            </div>
+          </label>
+        </div>
+        <p class="text-sm text-blue-600 mt-2 font-medium">Selected: {{ selectedGameMode }}</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <button (click)="createRoom()" [disabled]="!playerName.trim() || !connected"
+            class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+            Create New Room
+          </button>
+        </div>
+
+        <div class="space-y-2">
+          <input [(ngModel)]="roomId" placeholder="Enter room ID" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button (click)="joinRoom()" [disabled]="!playerName.trim() || !roomId.trim() || !connected"
+            class="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+            Join Room
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Lobby -->
+    <div *ngIf="currentRoom && !currentRoom.gameStarted" class="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <h2 class="text-2xl font-bold mb-4 text-center">Room: {{ currentRoom.id }}</h2>
+      <p class="text-center text-gray-600 mb-4">Mode: {{ currentRoom.gameMode === 'host' ? 'Host Mode' : 'Competitive Mode' }}</p>
+
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-2">Players:</h3>
+        <div class="space-y-2">
+          <div *ngFor="let player of currentRoom.players" class="flex items-center justify-between p-3 bg-gray-100 rounded">
+            <div class="flex items-center gap-3">
+              <span class="font-medium">{{ player.name }}</span>
+              <span *ngIf="currentRoom.gameMode === 'host'" class="text-sm px-2 py-1 rounded" [class]="player.role === 'host' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'">
+                {{ player.role === 'host' ? 'Host' : 'Guesser' }}
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span *ngIf="player.isReady" class="text-green-600 font-semibold">Ready!</span>
+              <span *ngIf="!player.isReady" class="text-gray-500">Not Ready</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Host Mode: Secret Number Input -->
+      <div *ngIf="currentRoom.gameMode === 'host' && isHost" class="mb-6 p-4 bg-blue-50 rounded-lg">
+        <h3 class="text-lg font-semibold mb-2">Set Secret Number</h3>
+        <p class="text-sm text-gray-600 mb-3">Enter a 4-digit number with unique digits (0-9)</p>
+        <div class="flex gap-2">
+          <input [(ngModel)]="secretNumber" maxlength="4" placeholder="1234" class="flex-1 p-3 border rounded-lg text-center text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class]="secretNumber.length === 4 ? (isSecretNumberValid ? 'border-green-500' : 'border-red-500') : 'border-gray-300'">
+          <button (click)="setSecretNumber()" [disabled]="!isSecretNumberValid" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+            Set Number
+          </button>
+        </div>
+        <p *ngIf="secretNumber.length === 4 && !isSecretNumberValid" class="text-red-600 text-sm mt-1">
+          Number must have 4 unique digits
+        </p>
+      </div>
+
+      <div class="text-center">
+        <button (click)="setReady()" [disabled]="!canReady" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+          {{ readyButtonText }}
+        </button>
+      </div>
+
+      <div *ngIf="currentRoom.players.length < 2" class="mt-4 text-center text-gray-600">
+        Waiting for another player to join...
+      </div>
+    </div>
+
+    <!-- Game Area -->
+    <div *ngIf="currentRoom?.gameStarted && gameState" class="bg-white rounded-lg shadow-lg p-6">
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold mb-2">Game in Progress</h2>
+        <p class="text-gray-600 mb-4">{{ currentRoom?.gameMode === 'host' ? 'Host Mode' : 'Competitive Mode' }}</p>
+
+        <div *ngIf="!gameState.isGameOver" class="mb-4">
+          <p class="text-lg">
+            Current Turn: <span class="font-bold text-blue-600">{{ getCurrentPlayerName() }}</span>
+          </p>
+          <p *ngIf="isMyTurn()" class="text-green-600 font-semibold">It's your turn!</p>
+          <p *ngIf="!isMyTurn()" class="text-yellow-600">Waiting for opponent...</p>
+        </div>
+
+        <div *ngIf="gameState.isGameOver" class="mb-4">
+          <div *ngIf="gameState.isGameWon" class="text-green-600 text-xl font-bold">
+            🎉 {{ getWinnerName() }} wins!
+          </div>
+          <div *ngIf="!gameState.isGameWon" class="text-red-600 text-xl font-bold">
+            Game Over! The number was {{ gameState.secretNumber }}
+          </div>
+          <button (click)="startNewGame()" class="mt-4 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+            New Game
+          </button>
+        </div>
+      </div>
+
+      <!-- Host Mode: Guess Grading -->
+      <div *ngIf="currentRoom?.gameMode === 'host' && isHost && pendingGrade" class="mb-6 p-4 bg-yellow-50 rounded-lg">
+        <h3 class="text-lg font-semibold mb-2">Grade Guess: {{ pendingGrade.guess }}</h3>
+        <p class="text-sm text-gray-600 mb-3">Player: {{ pendingGrade.playerName }}</p>
+        <div class="flex gap-4 items-center">
+          <div class="flex items-center gap-2">
+            <label class="font-medium">🐄 Cows:</label>
+            <input [(ngModel)]="gradeCows" type="number" min="0" max="4" class="w-16 p-2 border rounded text-center">
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="font-medium">🐂 Bulls:</label>
+            <input [(ngModel)]="gradeBulls" type="number" min="0" max="4" class="w-16 p-2 border rounded text-center">
+          </div>
+          <button (click)="submitGrade()" [disabled]="!isGradeValid" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+            Submit Grade
+          </button>
+        </div>
+        <p *ngIf="!isGradeValid" class="text-red-600 text-sm mt-1">
+          Cows + Bulls cannot exceed 4
+        </p>
+      </div>
+
+      <!-- Guess Input (Competitive Mode or Guesser in Host Mode) -->
+      <div *ngIf="!gameState.isGameOver && isMyTurn() && (currentRoom?.gameMode === 'competitive' || isGuesser)" class="mb-6">
+        <div class="flex gap-2 justify-center">
+          <input [(ngModel)]="currentGuess" maxlength="4" placeholder="Enter 4 unique digits" class="p-3 border rounded-lg text-center text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            (keyup.enter)="makeGuess()">
+          <button (click)="makeGuess()" [disabled]="!isValidGuess()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+            Guess
+          </button>
+        </div>
+        <p class="text-center text-sm text-gray-600 mt-2">
+          Enter 4 unique digits (0-9)
+        </p>
+      </div>
+
+      <!-- Game Progress -->
+      <div class="mb-4">
+        <p class="text-center text-lg">
+          Attempts: {{ gameState.guesses.length }} / {{ gameState.maxAttempts }}
+        </p>
+      </div>
+
+      <!-- Guess History -->
+      <div *ngIf="gameState.guesses.length > 0">
+        <h3 class="text-lg font-semibold mb-2 text-center">Guess History</h3>
+        <div class="space-y-2 max-h-64 overflow-y-auto">
+          <div *ngFor="let guess of gameState.guesses; let i = index" class="flex items-center justify-between p-3 bg-gray-100 rounded">
+            <div class="flex items-center gap-4">
+              <span class="font-bold">#{{ guess.attempt }}</span>
+              <span class="font-mono text-lg">{{ guess.guess }}</span>
+              <span class="text-sm text-gray-600">by {{ guess.playerName }}</span>
+            </div>
+            <div class="flex gap-4">
+              <span class="bg-yellow-200 px-2 py-1 rounded text-sm">
+                🐄 {{ guess.cows }}
+              </span>
+              <span class="bg-green-200 px-2 py-1 rounded text-sm">
+                🐂 {{ guess.bulls }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
