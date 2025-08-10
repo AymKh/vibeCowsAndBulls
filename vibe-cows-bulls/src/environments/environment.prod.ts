@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  socketUrl: 'https://your-render-backend-url.onrender.com'
+  socketUrl: 'https://cows-bulls-server.onrender.com'
 };
