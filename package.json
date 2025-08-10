@@ -1,0 +1,20 @@
+{
+  "name": "vibecowsandbulls",
+  "version": "1.0.0",
+  "description": "Cows &amp; Bulls game vibe coded",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AymKh/vibeCowsAndBulls.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AymKh/vibeCowsAndBulls/issues"
+  },
+  "homepage": "https://github.com/AymKh/vibeCowsAndBulls#readme"
+}
