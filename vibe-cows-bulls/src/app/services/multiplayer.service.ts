@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { GameState, GuessResult, Room, Player, HostGrade } from '../common/types';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class MultiplayerService {
   private pendingGuess = new BehaviorSubject<HostGrade | null>(null); // New: for host grading
 
   constructor() {
-    this.socket = io('http://localhost:3000');
+    this.socket = io(environment.socketUrl);
     this.setupSocketListeners();
   }
 

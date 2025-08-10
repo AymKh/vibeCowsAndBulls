@@ -7,8 +7,13 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:4200",
-    methods: ["GET", "POST"]
+    origin: [
+      "http://localhost:4200",
+      "https://cab.aymkh.tn",
+      /\.netlify\.app$/
+    ],
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
@@ -21,13 +26,13 @@ const rooms = new Map();
 function generateSecretNumber() {
   const digits = '0123456789'.split('');
   let result = '';
-  
+
   for (let i = 0; i < 4; i++) {
     const randomIndex = Math.floor(Math.random() * digits.length);
     result += digits[randomIndex];
     digits.splice(randomIndex, 1);
   }
-  
+
   return result;
 }
 
@@ -80,11 +85,11 @@ io.on('connection', (socket) => {
       gameMode: gameMode,
       hostId: gameMode === 'host' ? socket.id : null
     };
-    
+
     rooms.set(roomId, room);
     socket.join(roomId);
     socket.roomId = roomId;
-    
+
     socket.emit('room-created', {
       roomId,
       room
@@ -93,28 +98,28 @@ io.on('connection', (socket) => {
 
   socket.on('join-room', ({ roomId, playerName }) => {
     const room = rooms.get(roomId);
-    
+
     if (!room) {
       socket.emit('error', 'Room not found');
       return;
     }
-    
+
     if (room.players.length >= 2) {
       socket.emit('error', 'Room is full');
       return;
     }
-    
+
     const player = {
       id: socket.id,
       name: playerName,
       isReady: false,
       role: room.gameMode === 'host' ? 'guesser' : null
     };
-    
+
     room.players.push(player);
     socket.join(roomId);
     socket.roomId = roomId;
-    
+
     io.to(roomId).emit('player-joined', {
       room,
       newPlayer: player
@@ -124,30 +129,30 @@ io.on('connection', (socket) => {
   socket.on('player-ready', () => {
     const roomId = socket.roomId;
     const room = rooms.get(roomId);
-    
+
     if (!room) return;
-    
+
     // In host mode, host must set secret number before being ready
     if (room.gameMode === 'host' && room.hostId === socket.id && !room.gameState.secretNumber) {
       socket.emit('error', 'You must set a secret number before being ready');
       return;
     }
-    
+
     const player = room.players.find(p => p.id === socket.id);
     if (player) {
       player.isReady = true;
     }
-    
+
     const allReady = room.players.length === 2 && room.players.every(p => p.isReady);
-    
+
     io.to(roomId).emit('player-ready-update', {
       players: room.players,
       allReady
     });
-    
+
     if (allReady && !room.gameStarted) {
       room.gameStarted = true;
-      
+
       if (room.gameMode === 'host') {
         // In host mode, only the guesser makes guesses
         const guesser = room.players.find(p => p.role === 'guesser');
@@ -156,7 +161,7 @@ io.on('connection', (socket) => {
         // In competitive mode, first player starts
         room.gameState.currentPlayer = room.players[0].id;
       }
-      
+
       io.to(roomId).emit('game-started', {
         gameState: {
           ...room.gameState,
@@ -170,19 +175,19 @@ io.on('connection', (socket) => {
   socket.on('set-secret-number', ({ secretNumber }) => {
     const roomId = socket.roomId;
     const room = rooms.get(roomId);
-    
+
     if (!room || room.gameMode !== 'host' || room.hostId !== socket.id) {
       socket.emit('error', 'Not authorized to set secret number');
       return;
     }
-    
+
     if (!isValidGuess(secretNumber)) {
       socket.emit('error', 'Invalid secret number');
       return;
     }
-    
+
     room.gameState.secretNumber = secretNumber;
-    
+
     io.to(roomId).emit('secret-number-set', {
       success: true
     });
@@ -191,14 +196,14 @@ io.on('connection', (socket) => {
   socket.on('make-guess', ({ guess }) => {
     const roomId = socket.roomId;
     const room = rooms.get(roomId);
-    
+
     if (!room || !room.gameStarted || room.gameState.isGameOver) return;
-    
+
     if (room.gameState.currentPlayer !== socket.id) {
       socket.emit('error', 'Not your turn');
       return;
     }
-    
+
     if (!isValidGuess(guess)) {
       socket.emit('error', 'Invalid guess');
       return;
@@ -214,7 +219,7 @@ io.on('connection', (socket) => {
           playerId: socket.id,
           playerName: room.players.find(p => p.id === socket.id)?.name
         };
-        
+
         hostSocket.emit('guess-for-grading', {
           guess: guessForGrading
         });
@@ -259,12 +264,12 @@ io.on('connection', (socket) => {
   socket.on('grade-guess', ({ guess, cows, bulls }) => {
     const roomId = socket.roomId;
     const room = rooms.get(roomId);
-    
+
     if (!room || room.gameMode !== 'host' || room.hostId !== socket.id) {
       socket.emit('error', 'Not authorized to grade guesses');
       return;
     }
-    
+
     if (cows + bulls > 4 || cows < 0 || bulls < 0) {
       socket.emit('error', 'Invalid grade: cows + bulls cannot exceed 4');
       return;
@@ -302,9 +307,9 @@ io.on('connection', (socket) => {
   socket.on('new-game', () => {
     const roomId = socket.roomId;
     const room = rooms.get(roomId);
-    
+
     if (!room) return;
-    
+
     room.gameState = {
       secretNumber: room.gameMode === 'host' ? '' : generateSecretNumber(),
       guesses: [],
@@ -314,13 +319,13 @@ io.on('connection', (socket) => {
       currentPlayer: room.players[0].id,
       winner: null
     };
-    
+
     room.players.forEach(player => {
       player.isReady = false;
     });
-    
+
     room.gameStarted = false;
-    
+
     io.to(roomId).emit('new-game-created', {
       players: room.players
     });
@@ -328,13 +333,13 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
-    
+
     const roomId = socket.roomId;
     const room = rooms.get(roomId);
-    
+
     if (room) {
       room.players = room.players.filter(p => p.id !== socket.id);
-      
+
       if (room.players.length === 0) {
         rooms.delete(roomId);
       } else {

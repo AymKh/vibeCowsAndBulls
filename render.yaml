@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: cows-bulls-server
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        fromService:
+          type: web
+          name: cows-bulls-server
+          property: port
