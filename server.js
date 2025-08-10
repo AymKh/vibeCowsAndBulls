@@ -9,7 +9,7 @@ const io = socketIo(server, {
   cors: {
     origin: [
       "http://localhost:4200",
-      "https://cab.aymkh.tn",
+      "https://cab.maak-corp.tn",
       /\.netlify\.app$/
     ],
     methods: ["GET", "POST"],
