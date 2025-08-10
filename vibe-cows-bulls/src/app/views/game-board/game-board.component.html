@@ -1,111 +1,77 @@
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-  <div class="max-w-4xl mx-auto">
+<div class="w-full h-screen bg-[url('/assets/images/background.png')] bg-cover bg-center bg-no-repeat">
+  <div class="px-4 mx-auto space-y-8 w-full lg:max-w-4xl lg:px-0">
     <!-- Game Header -->
-    <div class="text-center mb-8">
-      <h1 class="text-4xl font-bold text-indigo-800 mb-2">Cows and Bulls</h1>
-      <p class="text-lg text-gray-600">Guess the 4-digit secret number with unique digits!</p>
-    </div>
-
-    <!-- Game Rules -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h2 class="text-xl font-semibold text-gray-800 mb-3">How to Play:</h2>
-      <div class="grid md:grid-cols-2 gap-4 text-gray-600">
+    <div class="p-4 space-y-4 text-center text-white bg-black rounded-xl">
+      <div>
+        <h1 class="text-4xl font-bold">Cows and Bulls</h1>
+        <p class="text-lg">Guess the 4-digit secret number with unique digits!</p>
+      </div>
+      <div class="flex flex-col justify-center items-center w-full text-sm">
         <div class="flex items-center">
-          <span class="text-2xl mr-3">🐄</span>
-          <span><strong>Cows:</strong> Correct digits in wrong positions</span>
+          <span class="text-2xl">🐄</span>
+          <span>Cows: Correct digits in wrong positions</span>
         </div>
         <div class="flex items-center">
-          <span class="text-2xl mr-3">🐂</span>
-          <span><strong>Bulls:</strong> Correct digits in correct positions</span>
+          <span class="text-2xl">🐂</span>
+          <span>Bulls: Correct digits in correct positions</span>
         </div>
       </div>
     </div>
 
     <!-- Game Status -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-      <div class="flex justify-between items-center mb-4">
-        <div class="text-lg font-semibold text-gray-800">
-          Attempts: {{ gameState.guesses.length }} / {{ gameState.maxAttempts }}
-        </div>
-        <div class="text-lg font-semibold text-gray-800">
-          Remaining: {{ getRemainingAttempts() }}
-        </div>
+    <div class="space-y-3 rounded-lg">
+      <div class="flex justify-between items-center text-white">
+        <div class="text-lg font-semibold">Attempts: {{ gameState.guesses.length }} / {{ gameState.maxAttempts }} </div>
+        <div class="text-lg font-semibold">Remaining: {{ getRemainingAttempts() }}</div>
       </div>
 
       <!-- Win/Loss Message -->
-      <div *ngIf="gameState.isGameOver" class="text-center p-4 rounded-lg mb-4"
-           [ngClass]="gameState.isGameWon ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
-        <div *ngIf="gameState.isGameWon" class="text-2xl font-bold">
-          🎉 Congratulations! You won! 🎉
-        </div>
-        <div *ngIf="!gameState.isGameWon" class="text-xl font-bold">
-          😞 Game Over! The secret number was: {{ gameService.getSecretNumber() }}
-        </div>
-        <button (click)="startNewGame()" 
-                class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
-          Play Again
-        </button>
+      <div *ngIf="gameState.isGameOver" class="p-4 mb-4 text-center rounded-lg" [ngClass]="gameState.isGameWon ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500'">
+        <div *ngIf="gameState.isGameWon" class="text-2xl font-bold">🥀 🥀 🥀 Congratulations! You won! 🥀 🥀 🥀 </div>
+        <div *ngIf="!gameState.isGameWon" class="text-xl font-bold">😞 Game Over! The secret number was: {{ gameService.getSecretNumber() }}</div>
+        <button (click)="startNewGame()" class="px-6 py-2 mt-4 font-bold text-white bg-red-400 rounded-lg transition duration-200 hover:bg-red-700">Play Again</button>
       </div>
 
       <!-- Input Form -->
-      <form *ngIf="!gameState.isGameOver" (ngSubmit)="onGuessSubmit()" class="flex flex-col sm:flex-row gap-4">
+      <form *ngIf="!gameState.isGameOver" (ngSubmit)="onGuessSubmit()" class="flex flex-col gap-4 sm:flex-row">
         <div class="flex-1">
-          <input type="text" 
-                 [(ngModel)]="currentGuess" 
-                 name="guess"
-                 maxlength="4" 
-                 placeholder="Enter 4 unique digits"
-                 class="w-full px-4 py-3 text-xl text-center font-mono border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none transition duration-200">
-          <div *ngIf="errorMessage" class="text-red-500 text-sm mt-2">{{ errorMessage }}</div>
+          <input type="text" [(ngModel)]="currentGuess" name="guess" maxlength="4" placeholder="Enter 4 unique digits"
+            class="px-4 py-3 w-full font-mono text-xl text-center rounded-lg border-2 border-gray-300 transition duration-200 focus:border-indigo-500 focus:outline-none">
+          <div *ngIf="errorMessage" class="mt-2 text-sm text-red-500">{{ errorMessage }}</div>
         </div>
-        <button type="submit" 
-                [disabled]="currentGuess.length !== 4"
-                class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-lg transition duration-200">
+        <button type="submit" [disabled]="currentGuess.length !== 4"
+          class="px-8 py-3 font-bold text-white bg-red-600 rounded-lg transition duration-200 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
           Guess
         </button>
       </form>
     </div>
 
     <!-- Guess History -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Guess History</h2>
-      
-      <div *ngIf="gameState.guesses.length === 0" class="text-gray-500 text-center py-8">
-        No guesses yet. Start playing!
+    <div *ngIf="gameState.guesses.length > 0" class="space-y-2">
+      <div class="grid grid-cols-4 gap-4 font-semibold text-gray-700 bg-[#ADADAD] rounded-lg">
+        <div class="text-center">Attempt</div>
+        <div class="text-center">Guess</div>
+        <div class="text-center">🐄 Cows</div>
+        <div class="text-center">🐂 Bulls</div>
       </div>
 
-      <div *ngIf="gameState.guesses.length > 0" class="space-y-2">
-        <div class="grid grid-cols-4 gap-4 p-3 bg-gray-50 rounded-lg font-semibold text-gray-700">
-          <div class="text-center">Attempt</div>
-          <div class="text-center">Guess</div>
-          <div class="text-center">🐄 Cows</div>
-          <div class="text-center">🐂 Bulls</div>
+      <div *ngFor="let guess of gameState.guesses; trackBy: trackByAttempt" class="grid grid-cols-4 gap-4 p-1 rounded-lg transition duration-200 border-1"
+        [ngClass]="guess.bulls === 4 ? 'border-green-300 bg-green-50' : 'border-gray-200 hover:border-gray-300'">
+        <div class="font-semibold text-center text-white">{{ guess.attempt }}</div>
+        <div class="font-mono text-lg font-bold text-center text-white">{{ guess.guess }}</div>
+        <div class="text-center">
+          <span class="inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-black rounded-full">{{ guess.cows }}</span>
         </div>
-        
-        <div *ngFor="let guess of gameState.guesses; trackBy: trackByAttempt" 
-             class="grid grid-cols-4 gap-4 p-3 rounded-lg border-2 transition duration-200"
-             [ngClass]="guess.bulls === 4 ? 'border-green-300 bg-green-50' : 'border-gray-200 hover:border-gray-300'">
-          <div class="text-center font-semibold">{{ guess.attempt }}</div>
-          <div class="text-center font-mono text-lg font-bold">{{ guess.guess }}</div>
-          <div class="text-center">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-              {{ guess.cows }}
-            </span>
-          </div>
-          <div class="text-center">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-                  [ngClass]="guess.bulls === 4 ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'">
-              {{ guess.bulls }}
-            </span>
-          </div>
+        <div class="text-center">
+          <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full" [ngClass]="guess.bulls === 4 ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'">{{
+            guess.bulls}}</span>
         </div>
       </div>
     </div>
 
     <!-- New Game Button -->
-    <div class="text-center mt-6" *ngIf="!gameState.isGameOver">
-      <button (click)="startNewGame()" 
-              class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
+    <div class="text-center" *ngIf="!gameState.isGameOver">
+      <button (click)="startNewGame()" class="px-6 py-2 font-bold text-white bg-gray-600 rounded-lg transition duration-200 hover:bg-gray-700">
         New Game
       </button>
     </div>
