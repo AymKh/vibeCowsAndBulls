@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GameService, GameState, GuessResult } from '../services/game.service';
+import { GameService } from '../../services/game.service';
+import { GameState, GuessResult } from '../../common/types';
 
 @Component({
   selector: 'app-game-board',
@@ -11,17 +12,20 @@ import { GameService, GameState, GuessResult } from '../services/game.service';
   styleUrl: './game-board.component.css'
 })
 export class GameBoardComponent {
-  gameState: GameState;
-  currentGuess: string = '';
-  errorMessage: string = '';
 
-  constructor(public gameService: GameService) {
+  protected gameState: GameState;
+  protected currentGuess: string = '';
+  protected errorMessage: string = '';
+
+  constructor(
+    public gameService: GameService
+  ) {
     this.gameState = this.gameService.getGameState();
   }
 
-  onGuessSubmit(): void {
+  protected onGuessSubmit(): void {
     this.errorMessage = '';
-    
+
     if (!this.isValidInput(this.currentGuess)) {
       this.errorMessage = 'Please enter a 4-digit number with unique digits';
       return;
@@ -43,18 +47,18 @@ export class GameBoardComponent {
     return uniqueDigits.size === 4;
   }
 
-  startNewGame(): void {
+  protected startNewGame(): void {
     this.gameService.startNewGame();
     this.gameState = this.gameService.getGameState();
     this.currentGuess = '';
     this.errorMessage = '';
   }
 
-  getRemainingAttempts(): number {
+  protected getRemainingAttempts(): number {
     return this.gameState.maxAttempts - this.gameState.guesses.length;
   }
 
-  trackByAttempt(_index: number, guess: GuessResult): number {
+  protected trackByAttempt(_index: number, guess: GuessResult): number {
     return guess.attempt;
   }
 }

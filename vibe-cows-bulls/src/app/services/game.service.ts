@@ -1,19 +1,7 @@
 import { Injectable } from '@angular/core';
+import { GameState, GuessResult } from '../common/types';
 
-export interface GameState {
-  secretNumber: string;
-  guesses: GuessResult[];
-  isGameWon: boolean;
-  isGameOver: boolean;
-  maxAttempts: number;
-}
 
-export interface GuessResult {
-  guess: string;
-  cows: number;
-  bulls: number;
-  attempt: number;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +19,7 @@ export class GameService {
     this.startNewGame();
   }
 
-  startNewGame(): void {
+  public startNewGame(): void {
     this.gameState = {
       secretNumber: this.generateSecretNumber(),
       guesses: [],
@@ -44,17 +32,17 @@ export class GameService {
   private generateSecretNumber(): string {
     const digits = '0123456789'.split('');
     let result = '';
-    
+
     for (let i = 0; i < 4; i++) {
       const randomIndex = Math.floor(Math.random() * digits.length);
       result += digits[randomIndex];
       digits.splice(randomIndex, 1);
     }
-    
+
     return result;
   }
 
-  makeGuess(guess: string): GuessResult | null {
+  public makeGuess(guess: string): GuessResult | null {
     if (this.gameState.isGameOver || !this.isValidGuess(guess)) {
       return null;
     }
@@ -101,11 +89,11 @@ export class GameService {
     return { cows, bulls };
   }
 
-  getGameState(): GameState {
+  public getGameState(): GameState {
     return { ...this.gameState };
   }
 
-  getSecretNumber(): string {
+  public getSecretNumber(): string {
     return this.gameState.secretNumber;
   }
 }
