@@ -2,7 +2,7 @@
   "name": "vibecowsandbulls",
   "version": "1.0.0",
   "description": "Cows &amp; Bulls game vibe coded",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
@@ -20,6 +20,10 @@
     "url": "https://github.com/AymKh/vibeCowsAndBulls/issues"
   },
   "homepage": "https://github.com/AymKh/vibeCowsAndBulls#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "dependencies": {
     "concurrently": "^9.2.0",
     "express": "^5.1.0",
