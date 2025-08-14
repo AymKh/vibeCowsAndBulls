@@ -19,8 +19,6 @@ const io = socketIo(server, {
 
 const PORT = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, 'vibe-cows-bulls/dist')));
-
 const rooms = new Map();
 
 function generateSecretNumber() {
@@ -353,5 +351,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`SOCKET Server running on port ${PORT}`);
 });
