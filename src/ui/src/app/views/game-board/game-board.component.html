@@ -1,12 +1,12 @@
 <div class="bg-[url('/assets/images/background.png')] bg-cover bg-center bg-no-repeat h-screen w-full lg:p-8 p-0">
-  <div class="px-4 mx-auto space-y-8 w-full lg:max-w-4xl lg:px-0">
+  <div class="w-full px-4 mx-auto space-y-8 lg:max-w-4xl lg:px-0">
     <!-- Game Header -->
     <div class="p-4 space-y-4 text-center text-white bg-black rounded-xl">
       <div>
         <h1 class="text-4xl font-bold">Cows and Bulls</h1>
         <p class="text-lg">Guess the 4-digit secret number with unique digits!</p>
       </div>
-      <div class="flex flex-col justify-center items-center w-full text-sm">
+      <div class="flex flex-col items-center justify-center w-full text-sm">
         <div class="flex items-center">
           <span class="text-2xl">🐄</span>
           <span>Cows: Correct digits in wrong positions</span>
@@ -20,7 +20,7 @@
 
     <!-- Game Status -->
     <div class="space-y-3 rounded-lg">
-      <div class="flex justify-between items-center text-white">
+      <div class="flex items-center justify-between text-white">
         <div class="text-lg font-semibold">Attempts: {{ gameState.guesses.length }} / {{ gameState.maxAttempts }} </div>
         <div class="text-lg font-semibold">Remaining: {{ getRemainingAttempts() }}</div>
       </div>
@@ -29,18 +29,18 @@
       <div *ngIf="gameState.isGameOver" class="p-4 mb-4 text-center rounded-lg" [ngClass]="gameState.isGameWon ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500'">
         <div *ngIf="gameState.isGameWon" class="text-2xl font-bold">🥀 🥀 🥀 Congratulations! You won! 🥀 🥀 🥀 </div>
         <div *ngIf="!gameState.isGameWon" class="text-xl font-bold">😞 Game Over! The secret number was: {{ gameService.getSecretNumber() }}</div>
-        <button (click)="startNewGame()" class="px-6 py-2 mt-4 font-bold text-white bg-red-400 rounded-lg transition duration-200 hover:bg-red-700">Play Again</button>
+        <button (click)="startNewGame()" class="px-6 py-2 mt-4 font-bold text-white transition duration-200 bg-red-400 rounded-lg hover:bg-red-700">Play Again</button>
       </div>
 
       <!-- Input Form -->
       <form *ngIf="!gameState.isGameOver" (ngSubmit)="onGuessSubmit()" class="flex flex-col gap-4 sm:flex-row">
         <div class="flex-1">
           <input type="text" [(ngModel)]="currentGuess" name="guess" maxlength="4" placeholder="Enter 4 unique digits"
-            class="px-4 py-3 w-full font-mono text-xl text-center rounded-lg border-2 border-gray-300 transition duration-200 focus:border-indigo-500 focus:outline-none">
+            class="w-full px-4 py-3 font-mono text-xl text-center transition duration-200 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none">
           <div *ngIf="errorMessage" class="mt-2 text-sm text-red-500">{{ errorMessage }}</div>
         </div>
         <button type="submit" [disabled]="currentGuess.length !== 4"
-          class="px-8 py-3 font-bold text-white bg-red-600 rounded-lg transition duration-200 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
+          class="px-8 py-3 font-bold text-white transition duration-200 bg-red-600 rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
           Guess
         </button>
       </form>
@@ -55,7 +55,7 @@
         <div class="text-center">🐂 Bulls</div>
       </div>
 
-      <div *ngFor="let guess of gameState.guesses; trackBy: trackByAttempt" class="grid grid-cols-4 gap-4 p-1 rounded-lg transition duration-200 border-1"
+      <div *ngFor="let guess of gameState.guesses; trackBy: trackByAttempt" class="grid grid-cols-4 gap-4 p-1 transition duration-200 rounded-lg border-1"
         [ngClass]="guess.bulls === 4 ? 'border-green-300 bg-green-50' : 'border-gray-200 hover:border-gray-300'">
         <div class="font-semibold text-center text-white">{{ guess.attempt }}</div>
         <div class="font-mono text-lg font-bold text-center text-white">{{ guess.guess }}</div>
@@ -71,7 +71,7 @@
 
     <!-- New Game Button -->
     <div class="text-center" *ngIf="!gameState.isGameOver">
-      <button (click)="startNewGame()" class="px-6 py-2 font-bold text-white bg-gray-600 rounded-lg transition duration-200 hover:bg-gray-700">
+      <button (click)="startNewGame()" class="px-6 py-2 font-bold text-white transition duration-200 bg-gray-600 rounded-lg hover:bg-gray-700">
         New Game
       </button>
     </div>

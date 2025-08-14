@@ -1,16 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { MultiplayerService } from '../../services/multiplayer.service';
-import { Room, GameState, GuessResult, HostGrade } from '../../common/types';
+import { Room, GameState, HostGrade } from '../../common/types';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-multiplayer',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './multiplayer.component.html',
-  styleUrls: ['./multiplayer.component.css']
+  styleUrls: ['./multiplayer.component.scss']
 })
 export class MultiplayerComponent implements OnInit, OnDestroy {
   playerName = '';
@@ -161,21 +157,21 @@ export class MultiplayerComponent implements OnInit, OnDestroy {
 
   get readyButtonText(): string {
     if (this.isCurrentPlayerReady) return 'Ready!';
-    
+
     if (this.currentRoom?.gameMode === 'host' && this.isHost) {
       return this.currentRoom.gameState.secretNumber ? 'Ready Up' : 'Set Secret Number First';
     }
-    
+
     return 'Ready Up';
   }
 
   get canReady(): boolean {
     if (this.isCurrentPlayerReady) return false;
-    
+
     if (this.currentRoom?.gameMode === 'host' && this.isHost) {
       return !!this.currentRoom.gameState.secretNumber;
     }
-    
+
     return true;
   }
 

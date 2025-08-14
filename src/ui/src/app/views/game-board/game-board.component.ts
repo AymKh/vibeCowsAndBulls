@@ -1,15 +1,11 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { GameService } from '../../services/game.service';
 import { GameState, GuessResult } from '../../common/types';
 
 @Component({
   selector: 'app-game-board',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './game-board.component.html',
-  styleUrl: './game-board.component.css'
+  styleUrl: './game-board.component.scss'
 })
 export class GameBoardComponent {
 
