@@ -13,7 +13,6 @@ export class HomeComponent implements OnInit {
       label: 'Single Player',
       route: '/singleplayer',
       image: '/assets/images/mainMenu/singleplayer.png',
-      imageHover: '/assets/images/mainMenu/singleplayer_hover.png',
     },
     {
       label: 'Multiplayer',
