@@ -13,16 +13,19 @@ export class HomeComponent implements OnInit {
       label: 'Single Player',
       route: '/singleplayer',
       image: '/assets/images/mainMenu/singleplayer.png',
+      imageHover: '/assets/images/mainMenu/singleplayer_hover.png',
     },
     {
       label: 'Multiplayer',
       route: '/multiplayer',
       image: '/assets/images/mainMenu/multiplayer.png',
+      imageHover: '/assets/images/mainMenu/multiplayer.png',
     },
     {
       label: 'Gallery',
       route: '/gallery',
       image: '/assets/images/mainMenu/gallery.png',
+      imageHover: '/assets/images/mainMenu/gallery.png',
     },
   ];
 

@@ -1,59 +1,57 @@
-<div class="w-full px-4 mx-auto space-y-8 lg:max-w-4xl lg:px-0">
+<section class="relative w-full px-4 mx-auto space-y-8 overflow-y-scroll lg:px-0">
   <!-- Game Status -->
   <div class="space-y-3 rounded-lg">
     <div class="flex items-center justify-between text-white">
       <div class="text-lg font-semibold">Attempts: {{ gameState.guesses.length }} / {{ gameState.maxAttempts }} </div>
-      <div class="text-lg font-semibold">Remaining: {{ getRemainingAttempts() }}</div>
+      <button (click)="startNewGame()" class="px-6 py-2 font-bold text-white transition duration-200 bg-gray-600 rounded-lg hover:bg-gray-700">New Game</button>
     </div>
 
     <!-- Win/Loss Message -->
-    <div *ngIf="gameState.isGameOver" class="p-4 mb-4 text-center rounded-lg" [ngClass]="gameState.isGameWon ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500'">
+    @if (gameState.isGameOver) {
+    <div class="p-4 mb-4 text-center rounded-lg" [ngClass]="gameState.isGameWon ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500'">
       <div *ngIf="gameState.isGameWon" class="text-2xl font-bold">🥀 🥀 🥀 Congratulations! You won! 🥀 🥀 🥀 </div>
       <div *ngIf="!gameState.isGameWon" class="text-xl font-bold">😞 Game Over! The secret number was: {{ gameService.getSecretNumber() }}</div>
       <button (click)="startNewGame()" class="px-6 py-2 mt-4 font-bold text-white transition duration-200 bg-red-400 rounded-lg hover:bg-red-700">Play Again</button>
     </div>
-
+    }
+    @else {
     <!-- Input Form -->
-    <form *ngIf="!gameState.isGameOver" (ngSubmit)="onGuessSubmit()" class="flex flex-col gap-4 sm:flex-row">
+    <form (ngSubmit)="onGuessSubmit()" class="flex items-center gap-2">
       <div class="flex-1">
-        <input type="text" [(ngModel)]="currentGuess" name="guess" maxlength="4" placeholder="Enter 4 unique digits"
+        <input type="number" [(ngModel)]="currentGuess" name="guess" maxlength="4" placeholder="Enter 4 unique digits"
           class="w-full px-4 py-3 font-mono text-xl text-center transition duration-200 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none">
         <div *ngIf="errorMessage" class="mt-2 text-sm text-red-500">{{ errorMessage }}</div>
       </div>
-      <button type="submit" [disabled]="currentGuess.length !== 4"
+      <button type="submit" [disabled]="currentGuess.toString().length !== 4"
         class="px-8 py-3 font-bold text-white transition duration-200 bg-red-600 rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
         Guess
       </button>
     </form>
+    }
   </div>
 
   <!-- Guess History -->
-  <div *ngIf="gameState.guesses.length > 0" class="space-y-2">
-    <div class="grid grid-cols-4 gap-4 font-semibold text-gray-700 bg-[#ADADAD] rounded-lg">
-      <div class="text-center">Attempt</div>
-      <div class="text-center">Guess</div>
-      <div class="text-center">🐄 Cows</div>
-      <div class="text-center">🐂 Bulls</div>
-    </div>
+  @if (gameState.guesses.length > 0) {
+  <div class="grid gap-1 grid-cols-[repeat(auto-fit,170px)]">
 
-    <div *ngFor="let guess of gameState.guesses; trackBy: trackByAttempt" class="grid grid-cols-4 gap-4 p-1 transition duration-200 rounded-lg border-1"
-      [ngClass]="guess.bulls === 4 ? 'border-green-300 bg-green-50' : 'border-gray-200 hover:border-gray-300'">
-      <div class="font-semibold text-center text-white">{{ guess.attempt }}</div>
-      <div class="font-mono text-lg font-bold text-center text-white">{{ guess.guess }}</div>
-      <div class="text-center">
-        <span class="inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-black rounded-full">{{ guess.cows }}</span>
-      </div>
-      <div class="text-center">
-        <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full" [ngClass]="guess.bulls === 4 ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'">{{
-          guess.bulls}}</span>
-      </div>
-    </div>
-  </div>
+    @for (guess of gameState.guesses; track $index) {
+    <div class="relative font-mono text-white">
+      <img src="/assets/images/guessCard.png" alt="gameCard" class="w-full">
+      <img src="/assets/images/cow.gif" alt="cow" class="absolute w-8 left-11 lg:left-10 lg:bottom-16 bottom-[60px]">
+      <img src="/assets/images/bull.gif" alt="cow" class="absolute w-8 right-11 lg:right-10 lg:bottom-16 bottom-[60px]">
 
-  <!-- New Game Button -->
-  <div class="text-center" *ngIf="!gameState.isGameOver">
-    <button (click)="startNewGame()" class="px-6 py-2 font-bold text-white transition duration-200 bg-gray-600 rounded-lg hover:bg-gray-700">
-      New Game
-    </button>
+
+      <div class="absolute flex flex-col items-center -translate-x-1/2 top-4 left-1/2">
+        <span>#{{ guess.attempt }}</span>
+        <span>{{ guess.guess }}</span>
+      </div>
+
+
+      <span class="absolute text-xl right-[49px] lg:right-[49px] lg:bottom-8 bottom-8">{{guess.bulls}}</span>
+      <span class="absolute text-xl left-[49px] lg:left-[49px] lg:bottom-8 bottom-8">{{ guess.cows }}</span>
+    </div>
+    }
+
   </div>
-</div>
+  }
+</section>

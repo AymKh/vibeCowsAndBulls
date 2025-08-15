@@ -42,7 +42,8 @@ export class GameService {
     return result;
   }
 
-  public makeGuess(guess: string): GuessResult | null {
+  public makeGuess(input: number): GuessResult | null {
+    const guess = input.toString()
     if (this.gameState.isGameOver || !this.isValidGuess(guess)) {
       return null;
     }
