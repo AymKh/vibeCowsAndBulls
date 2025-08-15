@@ -1,17 +1,17 @@
-<div class="min-h-screen bg-black bg-gradient-to-br">
-  <nav class="p-4 bg-black bg-opacity-20">
-    <div class="flex items-center justify-between max-w-6xl mx-auto">
-      <h1 class="text-2xl font-bold text-white">Cows & Bulls</h1>
-      <div class="space-x-4">
-        <a routerLink="/singleplayer" routerLinkActive="text-yellow-300" class="px-4 py-2 text-white transition-colors rounded hover:text-yellow-300">
-          Single Player
-        </a>
-        <a routerLink="/multiplayer" routerLinkActive="text-yellow-300" class="px-4 py-2 text-white transition-colors rounded hover:text-yellow-300">
-          Multiplayer
-        </a>
-      </div>
-    </div>
-  </nav>
+<section class="w-full h-screen overflow-hidden bg-[url('/assets/images/synth.gif')] bg-cover bg-top bg-no-repeat relative">
+  <div class="absolute top-0 left-0 z-0 w-full h-full bg-black/35 overlay"></div>
 
-  <router-outlet></router-outlet>
-</div>
+  <div class="!z-50 w-full h-full mx-auto lg:max-w-7xl">
+
+    <nav class="relative flex items-center justify-between w-full px-4 py-2">
+      <img src="/assets/images/logo.png" alt="logo" width="70" class="cursor-pointer" routerLink="/" title="Mom am scared, take me home">
+      <span>
+        🟢
+      </span>
+    </nav>
+
+    <router-outlet></router-outlet>
+
+  </div>
+
+</section>

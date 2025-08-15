@@ -1,0 +1,15 @@
+<section class="relative flex flex-col items-center justify-between w-full h-full gap-4">
+
+  <div class="flex flex-col items-center justify-center w-4/5 h-full gap-8 lg:w-full">
+
+    @for (nav of navigation; track $index) {
+    <div (mouseenter)="onMouseEnter()"
+      class="cursor-pointer w-[315px] h-[123px] lg:w-[415px] lg:h-[150px] relative flex items-center justify-center hover:rotate-2 transition-all duration-150 hover:scale-110">
+      <img [src]="nav.image" alt="menu-button" class="absolute top-0 left-0 object-contain w-full h-full">
+    </div>
+    }
+
+  </div>
+
+
+</section>
