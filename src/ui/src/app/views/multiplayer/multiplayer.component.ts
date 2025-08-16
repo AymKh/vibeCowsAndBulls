@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 export class MultiplayerComponent implements OnInit, OnDestroy {
   playerName = '';
   roomId = '';
-  currentGuess = '';
+  currentGuess: number = 0;
   selectedGameMode: 'competitive' | 'host' = 'competitive';
   secretNumber = '';
   pendingGrade: HostGrade | null = null;
@@ -52,7 +52,7 @@ export class MultiplayerComponent implements OnInit, OnDestroy {
 
       this.multiplayerService.guessResult$.subscribe(result => {
         if (result) {
-          this.currentGuess = '';
+          this.currentGuess = 0;
         }
       }),
 
@@ -89,8 +89,8 @@ export class MultiplayerComponent implements OnInit, OnDestroy {
   }
 
   makeGuess(): void {
-    if (this.currentGuess.trim()) {
-      this.multiplayerService.makeGuess(this.currentGuess);
+    if (this.currentGuess.toString().trim()) {
+      this.multiplayerService.makeGuess(this.currentGuess.toString());
     }
   }
 
@@ -141,9 +141,9 @@ export class MultiplayerComponent implements OnInit, OnDestroy {
   }
 
   isValidGuess(): boolean {
-    if (this.currentGuess.length !== 4) return false;
-    if (!/^\d+$/.test(this.currentGuess)) return false;
-    const uniqueDigits = new Set(this.currentGuess.split(''));
+    if (this.currentGuess.toString().length !== 4) return false;
+    if (!/^\d+$/.test(this.currentGuess.toString())) return false;
+    const uniqueDigits = new Set(this.currentGuess.toString().split(''));
     return uniqueDigits.size === 4;
   }
 

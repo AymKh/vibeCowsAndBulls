@@ -1,16 +1,18 @@
 <section class="w-full h-screen overflow-hidden bg-[url('/assets/images/synth.gif')] bg-cover bg-top bg-no-repeat relative">
   <div class="absolute top-0 left-0 z-0 w-full h-full bg-black/35 overlay"></div>
 
-  <div class="!z-50 w-full h-full mx-auto lg:max-w-7xl">
+  <div class="!z-50 w-full h-full mx-auto lg:max-w-7xl space-y-6">
 
     <nav class="relative flex items-center justify-between w-full px-4 py-2">
       <img src="/assets/images/logo.png" alt="logo" width="70" class="cursor-pointer" routerLink="/" title="Mom am scared, take me home">
-      <span>
-        🟢
+      <span class="p-2 bg-white rounded-full">
+        {{ connected ? '🟢' : '🤷‍♂️' }}
       </span>
     </nav>
 
-    <router-outlet></router-outlet>
+    <section>
+      <router-outlet></router-outlet>
+    </section>
 
   </div>
 
