@@ -156,7 +156,7 @@
     <div class="flex justify-center gap-2" *ngIf="!gameState.isGameOver && isMyTurn() && (currentRoom?.gameMode === 'competitive' || isGuesser)">
       <input type="number" [(ngModel)]="currentGuess" maxlength="4" placeholder="Enter 4 unique digits"
         class="p-3 text-xl text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" (keyup.enter)="makeGuess()">
-      <button (click)="makeGuess()" [disabled]="!isValidGuess()" class="px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+      <button (click)="makeGuess()" class="px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
         Guess
       </button>
     </div>
