@@ -38,7 +38,7 @@ export class GameBoardComponent {
     }
   }
 
-  private isValidInput(input: number): boolean {
+  protected isValidInput(input: number): boolean {
     const guess = input.toString()
     if (guess.length !== 4) return false;
     if (!/^\d+$/.test(guess)) return false;

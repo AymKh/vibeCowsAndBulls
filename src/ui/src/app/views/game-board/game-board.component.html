@@ -18,11 +18,12 @@
     <!-- Input Form -->
     <form (ngSubmit)="onGuessSubmit()" class="flex items-center gap-2">
       <div class="flex-1">
-        <input type="number" [(ngModel)]="currentGuess" name="guess" maxlength="4" placeholder="Enter 4 unique digits"
+        <input type="text" [(ngModel)]="currentGuess" name="guess" maxlength="4" placeholder="Enter 4 unique digits"
           class="w-full px-4 py-3 font-mono text-xl text-center transition duration-200 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none">
         <div *ngIf="errorMessage" class="mt-2 text-sm text-red-500">{{ errorMessage }}</div>
       </div>
-      <button type="submit" class="px-8 py-3 font-bold text-white transition duration-200 bg-red-600 rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
+      <button [disabled]="!isValidInput(currentGuess)" type="submit"
+        class="px-8 py-3 font-bold text-white transition duration-200 bg-red-600 rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
         Guess
       </button>
     </form>

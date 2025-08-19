@@ -141,6 +141,7 @@ export class MultiplayerComponent implements OnInit, OnDestroy {
   }
 
   isValidGuess(): boolean {
+    return true
     if (this.currentGuess.toString().length !== 4) return false;
     if (!/^\d+$/.test(this.currentGuess.toString())) return false;
     const uniqueDigits = new Set(this.currentGuess.toString().split(''));
